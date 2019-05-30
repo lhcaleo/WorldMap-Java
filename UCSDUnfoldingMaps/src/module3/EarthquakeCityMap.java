@@ -77,7 +77,10 @@ public class EarthquakeCityMap extends PApplet {
 	    // to create a new SimplePointMarker for each PointFeature in 
 	    // earthquakes.  Then add each new SimplePointMarker to the 
 	    // List markers (so that it will be added to the map in the line below)
-	    
+	    for(PointFeature pf: earthquakes) 
+	    {
+	    	markers.add(createMarker(pf));	
+	    }
 	    
 	    // Add the markers to the map so that they are displayed
 	    map.addMarkers(markers);
@@ -108,6 +111,8 @@ public class EarthquakeCityMap extends PApplet {
 		// Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
 	    int yellow = color(255, 255, 0);
+	    int blue = color(0,0,255);
+	    int red = color(255,0,0);
 		
 		// TODO (Step 4): Add code below to style the marker's size and color 
 	    // according to the magnitude of the earthquake.  
@@ -117,6 +122,24 @@ public class EarthquakeCityMap extends PApplet {
 	    // the magnitude to these variables (and change their value in the code 
 	    // above if you want to change what you mean by "moderate" and "light")
 	    
+	    // Minor earthquakes (less than magnitude 4.0) will have blue markers and be small.
+	    if(mag < THRESHOLD_LIGHT)
+	    {
+	    	marker.setColor(blue);
+	    	marker.setRadius(5);
+	    }
+	    // Light earthquakes (between 4.0-4.9) will have yellow markers and be medium size.
+	    if(mag >= THRESHOLD_LIGHT && mag <THRESHOLD_MODERATE) 
+	    {
+	    	marker.setColor(yellow);
+	    	marker.setRadius(7);
+	    }
+	    // Moderate and higher earthquakes (5.0 and over) will have red markers and be largest.
+	    else if (mag >= THRESHOLD_MODERATE) 
+	    {
+	    	marker.setColor(red);
+	    	marker.setRadius(10);
+	    }
 	    
 	    // Finally return the marker
 	    return marker;
@@ -134,6 +157,30 @@ public class EarthquakeCityMap extends PApplet {
 	private void addKey() 
 	{	
 		// Remember you can use Processing's graphics methods here
-	
+		String a = "Earthquake Key";
+		String b = "5.0+ Magnitude";
+		String c = "4.0+ Magnitude";
+		String d = "Below 4.0";
+		
+		stroke(140, 212, 255);
+		
+		fill(255, 250, 244);
+		rect(30,50,150,200);
+		
+		noStroke();
+		fill(255,0,0);
+		ellipse(60,120,15,15);
+
+		fill(255,255,0);
+		ellipse(60,160,12,12);
+		
+		fill(0,0,255);
+		ellipse(60,200,8,8);
+		
+		fill(0);
+		text(a,65,85);
+		text(b,75,125);
+		text(c,75,165);
+		text(d,75,205);
 	}
 }
