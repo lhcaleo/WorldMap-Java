@@ -225,7 +225,7 @@ public static void main (String[] args){
 }
 ```
 
-##Week 3
+##Week-3
 
 ### Core: Using PApplet
 
@@ -729,3 +729,432 @@ public class LifeExpectancy extends PApplet
   - type in <type> matches
   - E get(int index)
     - Here return type is **E** which is whatever type you declare the container to hold
+
+
+
+## Week-4
+
+### Why use Inheritance
+
+- Good for complex, large projects
+- keyword: extends
+
+---
+
+Fully written person class now needs to handle:
+
+1. Students
+2. Faculty
+
+Different students behave differently. eg. parttime fulltime
+
+**What do we want then?**
+
+1. Keep common behaviour in one class
+2. Split diffrent behaviour into seperate classes
+3. Keep all of the objects in a single data structure
+
+```java
+public class Person
+{
+	private String name;
+}
+```
+
+---
+
+### Extends
+
+"extends" means "inherit from"
+
+**What is inherited?**
+
+- public instance variables
+- public methods
+- **private** instance variables. Note: Private vars can be accesses <u>only</u> through public methods!
+
+```java
+public class Person    // Super class
+{
+	private String name;
+  public String getName(){ return name;}
+}
+```
+
+```java
+public class Student extends Person  // Subclass
+{
+	
+}
+```
+
+- UML diagram
+
+![Screen Shot 2019-05-31 at 12.46.22 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kei0msj6j308509bwf6.jpg)
+
+---
+
+![Screen Shot 2019-05-31 at 12.48.18 AM](https://ws3.sinaimg.cn/large/006tNc79ly1g3kek1lhw0j30nu09wwiu.jpg)
+
+---
+
+### Reference vs. Object Type "is-a"
+
+- `Person p = new Person();`     A Person "is-a" Person
+
+- `Student s = new Student();`  A Student "is-a" Student
+
+- Should `Person p = new Student();` be allowed? 
+  - Yes, because <u>A Student "is-a" Person</u>
+- A **Person** array CAN store **Student** and **Faculty** objects.
+
+```java
+// in main
+Person[] p = new Person[3];
+p[0] = new Person();
+p[1] = new Student();
+p[2] = new Faculty();
+```
+
+- Can `Student s = new Person();` be allowed?
+  - No, because not all the features of a Student are necessarily within a Person
+
+---
+
+### Concept Challenge: Reference and Objects
+
+![Screen Shot 2019-05-31 at 12.59.02 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kev5x067j30lp08542g.jpg)
+
+- Which statement cause error and which works?
+
+  - Works: 1,2,5
+
+  - Errors:
+
+    - 3    This line will not work because even though p now refers to a student object (after the line above), the compiler does not know this. P is a Person reference, the compiler does not know that p actually refers to a Student object. (Compiler doesn't know object type) It's gonna say p is a reference to a Person, I don't know about this getID() method, so I'm gonna cause error.
+
+      -You could fix this error with a cast: `int m = ((Student)p).getID();`
+
+    - 4    This will cause an error because a Person is not necessarily a Faculty
+
+---
+
+### Visibility Modifiers
+
+Less Restrictive `public` ———————  More Restrictive `private`
+
+
+
+- `public` can access from **any class**
+
+- `protected` can access from **same class, same package, any subclass**
+
+- `package(default)` can access from **same class, same package**
+
+- `private` can access from **same class**
+
+  
+
+- **Rule of thumb**: Make member variables private (and methods either public or private)
+
+- ![Screen Shot 2019-05-31 at 1.14.11 AM](https://ws3.sinaimg.cn/large/006tNc79ly1g3kfawv1w5j30jv0avq72.jpg)
+
+![Screen Shot 2019-05-31 at 1.14.54 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kfbngdqvj30je0am0w8.jpg)
+
+---
+
+
+
+![Screen Shot 2019-05-31 at 1.16.40 AM](https://ws1.sinaimg.cn/large/006tNc79ly1g3kfdmn80hj30ok0es0yr.jpg)
+
+
+
+---
+
+`Protected` is not recommended because it can be access from same package
+
+![Screen Shot 2019-05-31 at 1.17.05 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kfe33b7bj30os0fbag9.jpg)
+
+---
+
+`Package` is not recommended either.
+
+![Screen Shot 2019-05-31 at 1.20.53 AM](https://ws1.sinaimg.cn/large/006tNc79ly1g3kfhum8r0j30nx09ogoo.jpg)
+
+
+
+---
+
+---
+
+**Rule of thumb: always use either public or private**
+
+![Screen Shot 2019-05-31 at 1.21.26 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kfip4li6j30hg0d5420.jpg)
+
+---
+
+---
+
+
+
+### Object Creation in Java
+
+- `Student s = new Student();`
+  - **new** allocates space 
+  - ![Screen Shot 2019-05-31 at 1.24.58 AM](https://ws3.sinaimg.cn/large/006tNc79ly1g3kfm4kf3dj30i9067wgi.jpg)
+- Objects are created from the **inside out**
+  - ![Screen Shot 2019-05-31 at 1.25.47 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kfmyjz8zj30dk0czmyv.jpg)
+- 
+
+```
+The very first line of code of the person constructor is gonna immediately send you to it's indirect superclass or in this case, Object.
+
+Now, the object constructor can initialize the variables associated with object,
+
+essentially filling in that part of the object.
+
+Once it's done, it returns back to Person. Person now can initialize it's variables.
+
+And then it's gonna return back to Student. And Student now is gonna initialize the variables associated with Student. And through this process we've essentially initialized all these variables, went all the way up to object, and all the way back down. And that's what we mean by initializing inside out.
+```
+
+
+
+- When constructing objects, in what order are instance variables initialized?
+  - They are initialized starting at Object and working their way down through the inheritance hierarchy to your subclass. (So instance variable in your Subclass are initialized last.)
+    - This is correct. The subclass constructor calls constructors up the hierarchy until it reaches Object, then initializes variables starting with Object all the way back down to your subclass.
+
+---
+
+### Rules for Class Construction
+
+`Your Code` -> `Java Compiler` -> `Bytecode`
+
+- Threes Rules
+
+  1. No superclass? Compiler inserts: extends Object
+
+     ![Screen Shot 2019-05-31 at 1.31.16 AM](https://ws2.sinaimg.cn/large/006tNc79ly1g3kfsql66nj30ol09u42c.jpg)
+
+  2. No constructor? Java gives you one for you
+
+     - ![Screen Shot 2019-05-31 at 1.32.10 AM](https://ws1.sinaimg.cn/large/006tNc79ly1g3kftl3ulbj30ov09h787.jpg)	
+
+  3.  First line must be `this(argsopt)` (same class contructor call) or `super(argsopt)`(super class constructor call), Otherwise, Java inserts `super();`
+
+     - ![Screen Shot 2019-05-31 at 1.33.51 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3kfvex3rkj30dt09c76n.jpg)	
+
+     - ![Screen Shot 2019-05-31 at 1.34.37 AM](https://ws3.sinaimg.cn/large/006tNc79ly1g3kfwh4c8cj30or08ajv1.jpg)
+
+---
+
+
+
+- So, The Compiler makes this happen!
+  - ![Screen Shot 2019-05-31 at 1.36.27 AM](https://ws2.sinaimg.cn/large/006tNc79ly1g3kfy9zs02j30f40bpwgx.jpg)
+
+- How do we initialize `name`? Next class
+
+---
+
+###Variable Initialization in a Class Hierarchy
+
+![Screen Shot 2019-05-31 at 2.24.13 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3khbtwj1kj30f30c9q6y.jpg)
+
+---
+
+![Screen Shot 2019-05-31 at 2.25.23 AM](https://ws1.sinaimg.cn/large/006tNc79ly1g3khcz8gc3j30em0e8dji.jpg)
+
+If you start to recognize that I'm not allowed to say this.name, you're right.  That's a private variable in the person class. I'm not allowed to direct the access of that in the student class,  I'd have to use a getter or a setter to do so. But I don't have a getter or a setter. Is there a way for me to do this? Can I initialize name without having the public getter setter? 
+
+The answer is yes. 
+
+All I have to do is change this now to call the superclass constructor that takes an argument, which is gonna initialize to be named.
+
+```java
+public class Student extends Person
+{
+	public Student(String n)
+	{
+		super(n);
+	}
+}
+```
+
+- Let's add a no-arg default constructor
+  - ![Screen Shot 2019-05-31 at 2.27.39 AM](https://ws2.sinaimg.cn/large/006tNc79ly1g3khfe63t0j30o20aojw7.jpg)
+
+- But there is a better way !
+
+  - Use our same class constructor
+
+  - ```java
+    public class Student extends Person
+    {
+    	public Student(String n)
+    	{
+    		super(n);
+    	}
+    	public Student()
+    	{
+    		this("Student");  // Use our same class constructor
+    	}
+    }
+    ```
+
+    
+
+### Concept Challenge: Inheritance Constructors 1
+
+```java
+public class Person 
+{
+    private String name;
+    public Person( String n ) {
+        this.name = n;
+        System.out.print("#1 ");
+    }
+}
+
+public class Student extends Person {
+    public Student () {
+        this("Student"); 
+        System.out.print("#2 ");
+    }
+    public Student( String n ) 
+    { 
+        super(n);
+        System.out.print("#3 ");
+    }
+}
+```
+
+**Suppose in a main method you call** `Student s = new Student();`
+
+**Q: What is the order of the statements printed?**   #1 #3 #2
+
+---
+
+### Concept Challenge: Inheritance Constructors 2
+
+```java
+public class Person {
+    private String name;
+ 
+    public Person( String n ) {
+        super();
+        this.name = n;
+    }
+    public void setName( String n ) {
+        this.name = n;
+    }
+}
+
+public class Student extends Person {
+    public Student () {
+        this.setName("Student"); 
+    }
+}
+```
+
+**Suppose in a main method you call** `Student s = new Student();`
+
+**Q: What will be the value of the name variable for this object?**
+
+**A: There is a compile error**
+
+This is the correct answer, and make sure you know why. It is because the Person class has no default (no-argument) constructor. Since the Student constructor doesn't explicitly call super with an argument, Java will attempt to call the Person's non-existent no-argument constructor automatically. (Review 3 Rules of Compiler)
+
+```
+All right, now that you've worked through this yourself, let's work through it together. All we're doing here is we're calling the Student default constructor. So let's trace the code and see what happens. So we go over here to the Student default constructor, andyou might be tempted to just directly go and execute this line that says this.setName to the string Student, but the problem with that is, you'd be forgetting that the compiler actually inserts some code into this constructor. If the first line of the constructor is not either a call to the superclass constructor or a call to a constructor within the class, the compiler is going to insert a line to the superclass constructor that takes no arguments for us. 
+
+So, in order to trace through this code, we need to insert that line so we know exactly what's happening. 
+
+So let's do that now. So now that we see this call to the superclass constructor, we know that we have to go up to the Person class and find the constructor with no arguments. 
+
+So we go up to the Person class and we look for a constructor with no arguments.
+
+I don't really see one, do you? It's not there, and it turns out that Java will not insert one for us if we already had a constructor that takes an argument. So this is gonna cause a compile error.
+```
+
+---
+
+### Method Overriding
+
+- If we want our subclasses to behave differently all we have to do is override a method and now we get a different behaviour
+
+####Overloading vs Overriding
+
+- **<u>Overloading</u>**: **Same class** that has the **same method name** but **different parameters**.
+- **<u>Overriding</u>**: **Subclass** has **same method name** with the **same parameter**s as the superclass.
+
+
+
+![Screen Shot 2019-05-31 at 2.44.29 AM](https://ws3.sinaimg.cn/large/006tNc79ly1g3khww2ymhj30oe09pwiz.jpg)
+
+
+
+```java
+public class Person
+{
+	private String name;
+  @Override
+	public String toString()
+	{
+		return this.getName();
+	}
+}
+```
+
+```java
+// Assume ctor
+Person p = new Person("Tim");
+System.out.println(p.toString()); //Calls Person's toString()
+```
+
+**Note toString() in the syscall is unnecessary, ** **because print line actually automatically calls toString if you ever pass an object as a parameter to print line.**
+
+```java
+// Assume ctor
+Person p = new Person("Tim");
+System.out.println(p); //println Automatically calls toString()
+```
+
+Output:  `Tim`
+
+
+
+```java
+public class Student extends Person
+{
+	private int studentID;
+	
+	public int getSID()
+	{
+		return studentID;
+	}
+	@Override
+	public String toString()
+	{
+		return this.getSID() + ": " + super.toString(); // super refers to superclass
+	}
+}
+```
+
+```java
+// Assume ctor
+Student s = new Student("Cara", 1234);
+System.out.println(s);
+```
+
+Output: `1234: Cara`
+
+
+
+```java
+// Assume ctor
+Person s = new Student("Cara", 1234);
+System.out.println(s);
+```
+
+Output: `1234: Cara` Why? Polymorphism!
