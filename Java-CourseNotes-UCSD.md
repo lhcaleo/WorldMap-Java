@@ -1158,3 +1158,307 @@ System.out.println(s);
 ```
 
 Output: `1234: Cara` Why? Polymorphism!
+
+---
+
+### Polymorphism
+
+- Superclass reference to subclass object
+
+  - `Person s = new Student("Cara", 1234);`
+
+- ![Screen Shot 2019-05-31 at 6.21.50 PM](https://ws2.sinaimg.cn/large/006tNc79ly1g3l909a0auj30ik08p42x.jpg)
+  - ```java
+    // Assume appropriate ctors
+    Person p[] = new Person[3];
+    p[0] = new Person("Tim");
+    p[1] = new Student("Cara",1234);
+    p[3] = new Faculty("Mia","ABCD");
+    
+    for(int i = 0; i < p.length; i++)
+    {
+    	System.out.println(p[i]);
+    }
+    ```
+
+    - Do you think the method "toString" in the Person class will be called when p[1] is printed or do you think the "toString" method in the Student class will be called when p[1] is printed?
+
+      - The "`toString`" method in Student will be called for p[1]
+
+      - The **dynamic** (or actual) type of the object is Student, so <u>the appropriate method will be called.</u> This is what is commonly referred to as polymorphism.
+
+      - OUTPUT: 
+
+      - ```
+        Tim
+        1234: Cara
+        ABCD: Mia
+        ```
+
+    ---
+
+####Rules to Follow for Polymorphism
+
+"Think like a compiler, act like a runtime environment" - Rick Ord
+
+- **Compile Time Rules**
+
+  - Compiler <u>ONLY</u> knows reference type not runtime type
+  - Can only look in reference type class for method
+  - Outputs a method signature
+
+  ![Screen Shot 2019-05-31 at 6.31.15 PM](https://ws1.sinaimg.cn/large/006tNc79ly1g3l9a3mz52j30nr0dkqcj.jpg)
+
+- Run TIme Rules
+
+  - Follow exact runtime type of object to find method
+  - Must match compile time method signature to appropriate method in actual actual object's class
+
+  ![Screen Shot 2019-05-31 at 6.32.08 PM](https://ws1.sinaimg.cn/large/006tNc79ly1g3l9auwy41j30nj0dqwoc.jpg)
+
+---
+
+So ![Screen Shot 2019-05-31 at 6.33.28 PM](https://ws1.sinaimg.cn/large/006tNc79ly1g3l9cf5upuj30k10eujt4.jpg)
+
+Problem, Person reference has no getSID() method -> Compile Time Error!
+
+What should we do? CASTING!
+
+---
+
+####Casting Objects
+
+**Casting**
+
+- Automatic type promotion (like `int` to `double` )
+  - Superclass superRef = new Subclass();     (==Widening==)
+- Explicit casting (like `double` to `int` )
+  - Subclass ref = (Subclass) superRef;    	 	(==Narrowing==)
+  - Be careful: Compiler trusts you
+- ![Screen Shot 2019-05-31 at 6.39.11 PM](https://ws2.sinaimg.cn/large/006tNc79ly1g3l9i858fwj30no08sn0u.jpg)
+
+---
+
+
+
+- ![Screen Shot 2019-05-31 at 6.39.57 PM](https://ws3.sinaimg.cn/large/006tNc79ly1g3l9j0e6hnj30ns08xted.jpg)
+
+Problem: There is no getSID method in Person. What it tried to do is it tried to cast Person to a Student and it couldn't because it is a Person Object. In a sense you've broken the compiler's trust at this point. 
+
+Again you told the compiler, I know this is gonna be a student and it didn't turn out to be.
+
+![Screen Shot 2019-05-31 at 6.50.07 PM](https://ws4.sinaimg.cn/large/006tNc79ly1g3l9tpw9vzj30jy0awtac.jpg)
+
+Here class Student extends Person, but we cannot cast a reference to Person object to Student because the real object is not Student but Person.
+
+---
+
+- **Runtime Type Check**
+  - `instanceof`
+  - Provides runtime check of **is-a** relationship
+
+- ```java
+  if(s instanceof Student)
+  {
+  	// Only executes if s is-a student at runtime
+  	((Student) s).getSID();
+  }
+  ```
+
+----
+
+#### Concept Challenge: Polymorphism Part 1
+
+Consider the following class definitions:
+
+```java
+public class Person
+{
+  private String name; 
+
+  public Person(String name)  { this.name = name; }
+  public boolean isAsleep(int hr)  { return 22 < hr || 7 > hr; }
+  public String toString()      { return name; }
+
+  public void status( int hr )
+  {
+    if ( this.isAsleep( hr ) )
+      System.out.println( "Now offline: " + this );
+    else
+      System.out.println( "Now online: " + this );
+  }
+}
+```
+
+```java
+public class Student extends Person
+{
+  public Student(String name)  {
+    super(name);
+  }
+
+  public boolean isAsleep( int hr ) // override 
+  { return 2 < hr && 8 > hr; }
+}
+```
+
+Q: What will the following code, which appears in some main method, print:
+
+```java
+Person p;   // p is a person reference
+p = new Student("Sally");  
+// student is-a person, the actual object p refers to is a student
+p.status(1);  // We are calling .status(1) on a student object
+```
+
+Print: Now online: Sally
+
+A: Although someone who is just a Person is asleep at 1 in the morning, a student is awake at that hour. Because the object is actually a Student, and not just a person, Java calls the student's isAsleep method from the Person's status method at **run time.**
+
+```java
+  public void status( int hr )
+  {
+    if ( this.isAsleep( hr ) )  
+      // "this" is at runtime determined to be a student object, cause student object is the one that called this method originially
+      System.out.println( "Now offline: " + this );
+    else
+      System.out.println( "Now online: " + this );
+  }
+```
+
+---
+
+#### Concept Challenge: Polymorphism Part 2
+
+![Screen Shot 2019-05-31 at 7.02.54 PM](https://ws3.sinaimg.cn/large/006tNc79ly1g3la6wqw0fj308h0czq4n.jpg)
+
+```java
+public class Person {
+    public void method1() {
+        System.out.print("Person 1 ");
+    }
+    public void method2() {
+        System.out.print("Person 2 ");
+    }
+}
+```
+
+```java
+public class Student extends Person {
+    public void method1() {
+        System.out.print("Student 1 ");
+        super.method1();
+        method2();
+    }
+    public void method2() {
+        System.out.print("Student 2 ");
+    }
+}
+```
+
+```java
+public class Undergrad extends Student {
+     public void method2() {
+         System.out.print("Undergrad 2 ");
+     }
+}
+```
+
+Q: What will the following code, which is placed in a main method somewhere with access to all of the above classes, print?
+
+```java
+Person u = new Undergrad();
+u.method1();
+```
+
+Print: Student 1 Person 1 Undergrad 2
+
+**Tracing steps:**
+
+1. From u.method1(); 
+2. in undergrad class we don't see method1(), but undergrad extends student, so java is gonna look in Student class for method1(), 
+3. it finds method1() and executes `print("Student 1");`
+4.  `super.method1();`  so we go up from student class to person class and find method1(), and executes `print("Person 1")`
+5. Now, return back to method1() in Student class and execute `method2();`
+6. So which `method2()`?  Since we dont have a calling object at this point, java will insert a `this` -> `this.method2();`
+7. So what is the actual object type of the object `this` at runtime? It was an Undergrad Object
+8. We go to Undergrad class and call `method2()`, so it `print("Undergrad 2 ");`
+
+ the purpose of this example was to show you the difference between 
+
+
+
+#####What happens with a `call to super` and then `a method` and a `call to this` and `a method`.
+
+- Those calls to **super** and then a method get bound to **compile time**.
+  - So in compile time, Java is going to look at the code and figure out what class it's in and what the super class of that class is. 
+
+- But when we call **this** and then a method name, that's gonna happen at **runtime**.
+  - So Java is gonna use the <u>actual type of the object at runtime</u>.
+
+---
+
+### Abstract Classes and Interfaces
+
+![Screen Shot 2019-06-01 at 1.47.58 AM](https://ws4.sinaimg.cn/large/006tNc79ly1g3llwccoqrj30hm0crn3k.jpg)
+
+- **Abstract**
+
+  - Can make any class **abstract** with keyword
+    - `public abstract class Person{}`
+  - Class must be **abstract** if any methods are 
+    - `public abstract void monthlyStatement(){}`
+      - // concrete subclasses must override this abstract method
+
+- **Implementation vs. Inferface**
+
+  - <u>Abstract classes offer both inheritance of interface and inheritance of implementation</u> 
+    - You gain both the methods from the class (interface) and any implementation components (like instance variables, non-abstract methods, etc.)
+  - **Implementation: **instance variables and methods define common behaviour
+  - **Interface: **methods signatures which define required behaviours
+
+- What if we only want **interface**?
+
+  - Interfaces only define required methods
+
+  - Classes can inherit from multiple interfaces
+
+  - Example: Comprarable Interface
+
+  - ```java
+    //Defined in java.lang.Comparable
+    package java.lang;
+    
+    public interface Comparable<E>
+    {
+    	// Compare the object's name to o's name
+    	// Return < 0, 0, > 0 if this object compares 
+    	// less than, equal to, greater than o
+    	public abstract int compareTo(E o);
+     }
+    ```
+
+    
+
+  ```java
+  public class Person implements Comparable<Person>
+  {
+  	private String name;
+  	...
+  	@Override
+  	public int compareTo(Person o)
+  	{
+  		return this.getName().compareTo(o.getName());
+    }
+  }
+  ```
+
+- Abstact class or Interface?
+
+  - If you just want to define a required method
+    - Interface
+  - If you want to define potentially required methods AND common behaviours
+    - Abstract class
+
+---
+
