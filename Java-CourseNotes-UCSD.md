@@ -1,4 +1,4 @@
-#OOP in Java from Coursera UCSD Notes
+OOP in Java from Coursera UCSD Notes
 
 [TOC]
 
@@ -982,8 +982,9 @@ public class Student extends Person
 ```
 
 - Let's add a no-arg default constructor
-  - ![Screen Shot 2019-05-31 at 2.27.39 AM](https://ws2.sinaimg.cn/large/006tNc79ly1g3khfe63t0j30o20aojw7.jpg)
-
+  
+- ![Screen Shot 2019-05-31 at 2.27.39 AM](https://ws2.sinaimg.cn/large/006tNc79ly1g3khfe63t0j30o20aojw7.jpg)
+  
 - But there is a better way !
 
   - Use our same class constructor
@@ -1461,4 +1462,236 @@ Print: Student 1 Person 1 Undergrad 2
     - Abstract class
 
 ---
+
+
+
+## Week-5
+
+### Event-Driven Programming
+
+**Procedural**
+
+- Code execution follows predictable sequence, based on control logic and program state.
+
+- ```java
+  int[] vals = new int[7];
+  for(int i=0; i < vals.length; i++)
+  {
+  	vals[i] = i;
+  }
+  ```
+
+  
+
+**Event driven**
+
+```java
+public void keyPressed()
+{
+  ...
+}
+public void mousePressed()
+{
+  ...
+}
+```
+
+---
+
+###Implementing Events in UnfoldingMaps
+
+```java
+import processing.core*;
+import de.fhpotsdam.unfolding.*;
+import de.fhpotsdam.unfolding.providers.Google;
+
+public class MyPApplet extends PApplet
+{
+	private UnfoldingMap map;
+	
+	public void setup()    // execute once
+	{
+		size(800,600,OPENGL);
+		map = new UnfoldingMap(this,50,50,700,500,
+					new Google.GoogleMapProvider());
+	}
+	
+	public void draw()     // continuous loop
+	{
+		map.draw();
+	}
+	
+	public void keyPressed()
+	{
+		if(key == `w`)
+		{
+			background(255,255,255);  // code for white
+		}
+	}
+	
+}
+```
+
+- What happens when we run keyPressed( ) ? 
+  - the background of the canvas will be white
+
+```java
+...
+import de.fhpotsdam.unfolding.utils.MapUtils;
+
+public class DefaultEventExample extends PApplet
+{
+	private UnfoldingMap map;
+	
+	public void setup()   
+	{
+		map = new UnfoldingMap(this,50,50,700,500,
+					new Google.GoogleMapProvider());
+		MapUtils.createDefaultEventDispatcher(this, map); // <-Include this
+	}
+	...
+}
+```
+
+- **We don’t need to handle this event, by including `	MapUtils.createDefaultEventDispatcher(this, map);` in our setup method, our application will be <u>interactive(to listen for events)</u>**
+- Customize Interaction
+  - For `keypressed( ) ` we added above , We’re overriding the key press method from the super class, PApplet
+
+---
+
+###Implementing Buttons in UnfoldingMaps
+
+```java
+import processing.core*;
+import de.fhpotsdam.unfolding.*;
+import de.fhpotsdam.unfolding.providers.Google;
+import de.fhpotsdam.unfolding.utils.MapUtils;
+
+public class MyPApplet extends PApplet
+{
+	private UnfoldingMap map;
+	
+	public void setup()    // execute once
+	{
+		size(800,600,OPENGL);
+		map = new UnfoldingMap(this,50,50,700,500,
+					new Google.GoogleMapProvider());
+    MapUtils.createDefaultEventDispatcher(this, map); 
+	}
+	
+	public void draw()     // continuous loop
+	{
+		map.draw();
+	}
+	
+	public void keyPressed()
+	{
+		if(key == `w`)
+		{
+			background(255,255,255);  // code for white
+		}
+	}
+	
+}
+```
+
+- We’ll Add buttons to control the colour of the background
+
+![Screen Shot 2019-06-10 at 3.12.53 PM](http://ww1.sinaimg.cn/large/006tNc79ly1g3wnqpbhk6j30zu0b8ten.jpg)
+
+- `rect(x,y,width,length)`
+
+- Where should we add this code? setup or draw?
+
+  - IN `draw( )`. where we see them on top of the map where they’re supposed to be.
+
+- **Add button functionality**
+
+  - ```java
+    ...
+      public void draw()
+      {
+        map.draw();
+        drawButton();
+      }
+    
+      private void drawButtons()
+      {
+        fill(255,255,255);
+        rect(100,100,25,25);
+    
+        fill(100,100,100);
+        rect(100,150,25,25);
+      }
+    }
+    ```
+
+    ---
+
+    
+
+![Screen Shot 2019-06-10 at 3.16.36 PM](http://ww4.sinaimg.cn/large/006tNc79ly1g3wnukd7d9j30rq0jedlt.jpg)
+
+- To custom them
+
+  - `mouseReleased()` 
+
+    - check if position of mouse is inside one of the boxes .. then act
+    - find coordinates for white button
+      - (100,100) ,  (125,100),  (100,125),  (125,125)
+
+  - ```java
+    public void mouseReleased()
+    {
+        if(mouseX > 100 && mouseX < 125 &&  // check if in white bt
+            mouseY > 100 && mouseY < 125)
+        {
+          background(255,255,255);
+        }
+        else if (mouseX > 100 && mouseX < 125 &&   // if in gray bt
+            mouseY > 150 && mouseY < 175)
+        {
+          background(100,100,100);
+        }
+    }
+    ```
+
+    - `mouseX,mouseY` are inherited from PApplet
+
+---
+
+### Listener Hierachy
+
+- ![listenerHierarchy](http://ww1.sinaimg.cn/large/006tNc79ly1g3wo9svofyj30ui0nsta3.jpg)
+
+- The PApplet listening for user input, like most clicks and keyboard input, 
+
+  - what we're doing actually is saying the <u>PApplet implements two interfaces.</u> 
+  - <u>**PApplet** is a class</u>. And it implements the interface which means that it implements the methods that are required by the interface MouseListener. 
+  - And it also, implements the methods that are required by the interface KeyListener. It's fulfilling the promises made by those interfaces. 
+
+- **MouseListener** as an interface. 
+
+  - The MouseListener makes a promise that methods like mousePressed, mouseClicked, and mouseReleased will be implemented.
+
+  
+
+  ---
+
+  
+
+- There are also qualitatively different events and qualitatively different listeners. 
+
+  So for example, it turns out that, 
+
+  - <u>the Map object itself can act as a listener</u>. 
+  - Just slightly different kind of listener, there's this other interface called EventListener and the UnfoldingMap implements it. 
+  - And what the UnfoldingMap listens for is for events to do with the map itself, like zoom and pan. 
+  - ![Screen Shot 2019-06-10 at 3.30.47 PM](http://ww2.sinaimg.cn/large/006tNc79ly1g3wo9bm8gnj30yu0d6tf5.jpg)
+
+  
+
+- The point of this is that the notion of event driven program can be used very generally, and can help us design programs that makes sense in the particular context that we're working with. 
+
+- Sometimes it's for UI, user interface, but other times, it's for interacting with more complicated objects.
 
