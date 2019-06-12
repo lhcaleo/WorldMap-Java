@@ -146,6 +146,20 @@ public class EarthquakeCityMap extends PApplet {
 	private void selectMarkerIfHover(List<Marker> markers)
 	{
 		// TODO: Implement this method
+		for(Marker marker:markers) 
+		{
+			// check if a location is insed a marker
+			// mouseX and mouseY store the values of the current mouse position
+			
+			//if(marker.isInside(map, mouseX, mouseY) && !marker.isSelected()) 
+			if(marker.isInside(map, mouseX, mouseY) && lastSelected == null) 
+			{
+				// found a selected marker
+				lastSelected = (CommonMarker) marker;
+				marker.setSelected(true);
+			}
+		}
+		
 	}
 	
 	/** The event handler for mouse clicks
@@ -159,8 +173,94 @@ public class EarthquakeCityMap extends PApplet {
 		// TODO: Implement this method
 		// Hint: You probably want a helper method or two to keep this code
 		// from getting too long/disorganized
+		
+		// When lastClick variable is not null, then click "de-selects"
+		// whichever marker was clicked on last
+		// and so all markers should be displayed
+		if(lastClicked != null) 
+		{
+			lastClicked.setClicked(false);
+			lastClicked = null;
+			unhideMarkers();
+		}
+		// if lastclick is null, determine which marker 
+		// is being selected (if any) 
+		else 
+		{
+			lastClickedNotNull();
+		}
+		
 	}
 	
+	// Helper method for mouseClicked()
+	private void lastClickedNotNull() 
+	{
+		// if earthquake's marker is selected
+		for(Marker quakeMarker: quakeMarkers) 
+		{
+			if(quakeMarker.isSelected()) 
+			{
+				lastClicked = (CommonMarker) quakeMarker;
+				hideNdisplayIfQuake(quakeMarker);	
+			}
+		}
+		// if city's marker is selected
+		for(Marker cityMarker: cityMarkers) 
+		{
+			if(cityMarker.isSelected()) 
+			{
+				lastClicked = (CommonMarker) cityMarker;
+				hideNdisplayIfCity(cityMarker);
+			}
+		}
+	}
+	
+	// Helper method for lastClickedNotNull()
+	// When an earthquake’s marker is selected
+	// all cities within the cricle are displayed
+	// all other cities (outside circle) & earthquakes(n-1) are hidden.
+	private void hideNdisplayIfQuake(Marker aQuakeMarker) 
+	{
+		double radius = ((EarthquakeMarker) aQuakeMarker).threatCircle();
+		for(Marker quakeMarker: quakeMarkers) 
+		{
+			if(!quakeMarker.equals(aQuakeMarker))
+			{
+				quakeMarker.setHidden(true);
+			}
+		}
+		for(Marker cityMarker: cityMarkers)
+		{
+			if(cityMarker.getDistanceTo(aQuakeMarker.getLocation()) > radius)
+			{
+				cityMarker.setHidden(true);
+			}
+		}
+	}
+	
+	// Helper method for lastClickedNotNull()
+	// When a city’s marker is selected
+	// all earthquakes which contains that city in the cricle are displayed
+	// all other cities (n-1) & earthquakes(don't contain that city) are hidden.
+	private void hideNdisplayIfCity(Marker aCityMarker) 
+	{
+		double radius;
+		for(Marker quakeMarker: quakeMarkers) 
+		{
+			radius = ((EarthquakeMarker) quakeMarker).threatCircle();
+			if(quakeMarker.getDistanceTo(aCityMarker.getLocation()) > radius) 
+			{
+				quakeMarker.setHidden(true);
+			}
+		}
+		for(Marker cityMarker: cityMarkers)
+		{
+			if(!cityMarker.equals(aCityMarker))
+			{
+				cityMarker.setHidden(true);
+			}
+		}
+	}
 	
 	// loop over and unhide all markers
 	private void unhideMarkers() {
