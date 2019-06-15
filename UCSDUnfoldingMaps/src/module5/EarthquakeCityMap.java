@@ -14,8 +14,10 @@ import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import parsing.ParseFeed;
 import processing.core.PApplet;
+
 
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
@@ -23,7 +25,7 @@ import processing.core.PApplet;
  * @author Your name here
  * Date: July 17, 2015
  * */
-public class EarthquakeCityMap extends PApplet {
+public class EarthquakeCityMap extends PApplet{
 	
 	// We will use member variables, instead of local variables, to store the data
 	// that the setup and draw methods will need to access (as well as other methods)
@@ -48,10 +50,10 @@ public class EarthquakeCityMap extends PApplet {
 	private String countryFile = "countries.geo.json";
 	
 	// The map
-	private UnfoldingMap map;
+	private static UnfoldingMap map;
 	
 	// Markers for each city
-	private List<Marker> cityMarkers;
+	static private List<Marker> cityMarkers;
 	// Markers for each earthquake
 	private List<Marker> quakeMarkers;
 
@@ -200,8 +202,10 @@ public class EarthquakeCityMap extends PApplet {
 		{
 			if(quakeMarker.isSelected()) 
 			{
+				((CommonMarker) quakeMarker).setClicked(true);
 				lastClicked = (CommonMarker) quakeMarker;
 				hideNdisplayIfQuake(quakeMarker);	
+				return;
 			}
 		}
 		// if city's marker is selected
@@ -211,6 +215,7 @@ public class EarthquakeCityMap extends PApplet {
 			{
 				lastClicked = (CommonMarker) cityMarker;
 				hideNdisplayIfCity(cityMarker);
+				return;
 			}
 		}
 	}
@@ -219,8 +224,9 @@ public class EarthquakeCityMap extends PApplet {
 	// When an earthquake’s marker is selected
 	// all cities within the cricle are displayed
 	// all other cities (outside circle) & earthquakes(n-1) are hidden.
-	private void hideNdisplayIfQuake(Marker aQuakeMarker) 
+	private void hideNdisplayIfQuake(Marker pQuakeMarker) 
 	{
+		EarthquakeMarker aQuakeMarker = (EarthquakeMarker) pQuakeMarker;
 		double radius = ((EarthquakeMarker) aQuakeMarker).threatCircle();
 		for(Marker quakeMarker: quakeMarkers) 
 		{
@@ -237,6 +243,7 @@ public class EarthquakeCityMap extends PApplet {
 			}
 		}
 	}
+	
 	
 	// Helper method for lastClickedNotNull()
 	// When a city’s marker is selected
@@ -413,6 +420,17 @@ public class EarthquakeCityMap extends PApplet {
 			return true;
 		}
 		return false;
+	}
+
+	// Getter method for oceanquakemarker class to copy cityMarkers
+	public static List<Marker> getCityMarkers()
+	{
+		return cityMarkers;
+	}
+	// Helper metdho to get screen position of a marker
+	public static ScreenPosition getScreenPosition(Marker marker)
+	{
+		return map.getScreenPosition(marker.getLocation());
 	}
 
 }
