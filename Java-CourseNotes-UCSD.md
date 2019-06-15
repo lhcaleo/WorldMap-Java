@@ -1695,3 +1695,166 @@ public class MyPApplet extends PApplet
 
 - Sometimes it's for UI, user interface, but other times, it's for interacting with more complicated objects.
 
+
+
+---
+
+## Week-6
+
+- Searching
+- Basic Sorting
+
+##Searching
+
+###Linear Search
+
+- **Airport code is a 3-letter code.**
+- ![Screen Shot 2019-06-15 at 1.42.55 PM](http://ww1.sinaimg.cn/large/006tNc79ly1g42d8ohz2cj30p10bgjxe.jpg)
+
+- ```java
+  public class Airport // Need to represent airport data
+  {
+  	private String city;
+  	private String country;
+  	private String code3;
+  	...
+  	
+  	public String getCity(){ return this.city;}
+  	public String getCountry(){	return this.country;}
+  	public String getCode(){return this.code3;}
+  }
+  ```
+
+  ![Screen Shot 2019-06-15 at 1.44.52 PM](http://ww2.sinaimg.cn/large/006tNc79ly1g42dall2sfj30ou0ar0xk.jpg)
+
+- Array of Airport object
+- For simplification
+- ![Screen Shot 2019-06-15 at 1.45.49 PM](http://ww3.sinaimg.cn/large/006tNc79ly1g42dbpvq6ij30op06xad5.jpg)
+
+- Ex: Find Beijing: Linear Search
+- `toFind[Beijing]`
+  - start at beginning, keep going.   `index[0]`
+
+---
+
+**LinearSearch Basic Algorithm** (Pseudocode)
+
+```c
+Start at the first index in the array
+while index is less than the length of the array; // Loop
+		if the city to find equals the city at the current index,
+			return the airport code
+		increment index by 1
+return a value to indicate the airport was not found
+```
+
+
+
+```java
+// toFind is a city name
+public static String findAirportCode(String toFind, Airport[] airports)
+{
+  for(int i = 0; i < airports.length();i++)
+  {
+    if(airports[i].getCountry().equals(toFind)) 
+    {
+      return airports[i].getCode; 
+  	}
+  }
+  return null; // indicate not found
+}
+```
+
+If we’re very unlucky, we will have to look through n elements.
+
+ **Differences between equals and == operator**
+
+- `.equals` is saying to Java is, I want to compare the string representations in these two objects by essentially their characters. I wanna know, are they the same string?. I don't care if their the exact same object in memory, I just wanna know, is it the same string of characters? and the .equals method will do that. 
+- The `== operator`, compares the references that are stored in two particular variables. And so that will only be true if those are actually the same literal object in Java's memory.
+- We can use == operators for reference comparison (**address comparison**) and .equals() method for **content comparison**. In simple words, == checks if both objects point to the same memory location whereas .equals() evaluates to the comparison of values in the objects.
+- If a class does not [override the equals method](https://www.geeksforgeeks.org/overriding-equals-method-in-java/), then by default it uses equals(Object o) method of the closest parent class that has overridden this method. See [this ](https://www.geeksforgeeks.org/override-equalsobject-hashcode-method/)for detail
+
+---
+
+### Binary Search
+
+Much better than linear search!
+
+- Linear search: search through each position in the array, in order, element by element.
+
+- Binary search: cut the list in half, only search half the list
+  - List must be sorted on what you are searching(city) !
+  - What part of the array still needs to be searched? `toFind[Beijing]`
+    - Range: low 0 hight 7
+    - Midpoint = (low+high)/2 = integer division will truncate 0.5 so = 3
+    - Then, compare to the middle element. Match?
+      - which half of the array is no longer active?
+        - whether beijing is smaller or greater than middle point city(Essen)?
+        - Since Beijing comes before Essen, Beijing is smaller. Anything greater than Essen is no long active.
+        - Low 0, change High = mid -1 = 2, mid = (0+2)/2 = 1
+        - Compare again, match!
+        - ![Screen Shot 2019-06-15 at 3.51.30 PM](http://ww2.sinaimg.cn/large/006tNc79ly1g42gycj2rnj30p109bn1j.jpg)
+
+---
+
+**Binary Search: Basic Algorithm (Pseudocode)**
+
+```c
+Initialize low = 0, high = size of list - 1
+while ???:
+	mid = (high+low)/2;
+	if the city to find equals the city at mid
+		return the airport code
+	if the city is alphabetically less than the city at mid
+		high = mid - 1;
+	else low = mid + 1;
+return a value to indicate not found
+```
+
+- When to stop the while loop?
+  - low <= high
+
+```java
+//toFind is a city name 
+public static String findAirportCodeBS(String toFind, Airport[] airports)
+{
+	int low = -;
+	int high = airports.length;
+	int mid;
+	while(low <= high)
+	{
+		//mid = (low+high)/2; May cause overflow if low and high are two large
+    mid = low + (high-low)/2;
+		int compare = toFind.compareTo(airports[mid].getCity());
+		if(compare < 0) // toFindelement is less
+		{
+			high = mid - 1;
+		}
+		else if (compare > 0)
+		{
+			low = mid+1;
+		}
+		else return airports[mid].getCity();
+	}
+	return null;
+}
+```
+
+Note:
+
+```java
+mid = (low+high)/2; //may cause overflow if low and high are too large.
+//we should using range instead
+mid = low + ((high-low)/2);
+```
+
+![Screen Shot 2019-06-15 at 4.11.54 PM](http://ww2.sinaimg.cn/large/006tNc79ly1g42hjpjoazj30og07emzs.jpg)
+
+Performan is much better:
+
+Half-Half-Half….  => how many times n can be divided by 2. 
+
+$log_2(n)$ = y    i.e. $2^y = n$      Like n=16, then log2(n) = 4.
+
+---
+
