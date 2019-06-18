@@ -1,4 +1,4 @@
-OOP in Java from Coursera UCSD Notes
+ OOP in Java from Coursera UCSD Notes
 
 [TOC]
 
@@ -75,7 +75,7 @@ public class SimpleLocation{
 
 ### Public and Private (Level of access)
 
-- `public` means can access from any class
+- #### `public` means can access from any class
 - `private` means can access **only** from the class (in this case SimpleLocation)
 
 ```java
@@ -1704,7 +1704,7 @@ public class MyPApplet extends PApplet
 - Searching
 - Basic Sorting
 
-##Searching
+###Searching
 
 ###Linear Search
 
@@ -1776,7 +1776,7 @@ If we’re very unlucky, we will have to look through n elements.
 
 ---
 
-### Binary Search
+#### Binary Search
 
 Much better than linear search!
 
@@ -1855,6 +1855,239 @@ Performan is much better:
 Half-Half-Half….  => how many times n can be divided by 2. 
 
 $log_2(n)$ = y    i.e. $2^y = n$      Like n=16, then log2(n) = 4.
+
+---
+
+###Basic Sorting
+
+Sorting City, Country… according to alphabet order can both help in linear and binary search.
+
+Finding duplicates? we can sort it firstly.
+
+----
+
+####Selection Sort Algorithm
+
+- Example of Array of integers:  `7 16 66 43 97 51`
+- Want to Organize from smallest to largest
+
+**Algorithm: Selection sort**
+
+- Find smallest element, swap it with element in location 0
+- Find next smallest element sawp it with element in location 1
+- ...
+
+![Screen Shot 2019-06-15 at 4.49.16 PM](http://ww4.sinaimg.cn/large/006tNc79ly1g42imii94yj30kx08ejue.jpg)
+
+<u>second last postion: length-2 :</u>A small optimization: once we’ve sorted the first all last elements of the array, then the last element is going to be in the correct position.
+
+<u>Invariant property:</u>  Once we worked on postion 0,1,2,3,.. the elements in those positions are sorted and not gonna change at all.
+
+**Find smallest element in postion i to length-1, Swap it with element in position i**
+
+**Implementation**
+
+```java
+public static void selectionSort(int[] vals)
+{
+  	int indexMin;
+		for(int i = 0; i < vals.length-1; i++)
+    {
+      indexMin = i;
+      for(int j = i + 1; j < vals.length; j++)
+      {
+          if(vals[j] < vals[indexMin])
+          { 
+            indexMin = j;
+          }
+      }
+      swap(vals,indexMin,i);
+    }
+}
+```
+
+**Selection Sort Analysis**
+
+https://www.khanacademy.org/computing/computer-science/algorithms/sorting-algorithms/a/analysis-of-selection-sort
+
+Performance: 
+
+- Slow. 
+- The running time of selection sort is $\Theta(n^2)$
+- Selection sort gets no benefit from sorting an already sorted array, because its inner loop always runs to the end of the array to be sure its found the smallest remaining element.
+
+---
+
+#### Insertion Sort
+
+```java
+public static void mysterySort(int[] vals)
+{
+	int currInd;
+	for(int pos = 1; pos < vals.length; pos++)
+	{
+		currInd = pos;
+		
+		while(currInd > 0 && vals[currInd] < vals[currInd-1])
+		{
+			swap(vals, currInd, currInd-1);
+			currInd = currInd - 1;
+		}
+	}
+}
+```
+
+Example: `7 16 66 43 97 51`
+
+1. pos: 1 currInd: 1
+   1. 16 < 7 ? No
+2. pos: 2 currInd: 2
+   1. 66 < 16? No
+3. Pos: 3 currInd: 3
+   1. 43 < 66? Yes
+      1. swap 43 and 6 -> `7 16 43 66 97 51`, currInd = 2
+         1. check 43 < 16? No
+   2. Pos: 4 currInd: 4
+      - ….
+
+![Screen Shot 2019-06-17 at 7.57.44 PM](http://ww2.sinaimg.cn/large/006tNc79ly1g44zbauj1oj30gg0a0dir.jpg)
+
+
+
+Growing an array that is relatively sorted even though there might need to be some elements that get put in into that array later on, as we process that array.  
+
+![Screen Shot 2019-06-17 at 7.59.22 PM](http://ww2.sinaimg.cn/large/006tNc79ly1g44zcykc4jj30ge079jt6.jpg)
+
+![Screen Shot 2019-06-17 at 8.01.09 PM](http://ww1.sinaimg.cn/large/006tNc79ly1g44zepbw36j30jd054wgw.jpg)
+
+This is **<u>Insertion Sort.</u>** 
+
+To sum up the running times for insertion sort:
+
+- Worst case: $\Theta(n^2)$
+- Best case: $\Theta(n)$
+- Average case for a random array: $\Theta(n^2).$
+- "Almost sorted" case: $\Theta(n).$
+
+---
+
+---
+
+#### Java Built-in Sort
+
+- Use pre-defined Java method to sort
+- Explain the properties of the built-in sort
+
+<u>Review of basic sorting algorithms</u>
+
+- **Selection Sort**
+  - For each **position i** from **0** to **length - 2**
+  - Find Smallest element in “still unsorted”, Swap it to **position i**
+- **Insertion Sort**
+  - For each **position i** from **1** to **length - 1**
+  - Find correct location of **i-th** element relative to first **i-1**, Swap successive pairs to get there 
+
+---
+
+```java
+import java.util.*;
+
+public class MyBuiltInSortingTest
+{
+	public static void main(String[] args)
+	{
+		Random random = new Random();
+		List<Integer> numsToSort = new ArrayList<Integer>();
+		
+		for(int i = 0; i < 5; i ++)
+		{
+			numsToSort.add(random.nextInt(100));
+		}
+		
+		Collections.sort(numsToSort); // Built-in Sort
+		System.out.println("New array after built-in sort: " 
+				+ numsToSort.toString());	
+		}
+}
+```
+
+- <u>It is an Optimized merge sort</u>
+  - Fast
+    - In worst case
+    - On nearly sorted data
+  - Stable
+- https://docs.oracle.com/javase/tutorial/collections/algorithms/
+
+
+
+---
+
+### Comparable Interface
+
+What is the data we want to compare is not integers? like airports.
+
+1. implements Comparable<...>
+2. override compareTo( ) method
+
+![Screen Shot 2019-06-17 at 8.23.36 PM](http://ww1.sinaimg.cn/large/006tNc79ly1g45024madvj30m606vgo3.jpg)
+
+```java
+// we implement Comparable interface for the class Airport
+public class Airport implements Comparable<Airport>
+{
+	private String city;
+	private String country;
+	private String code3;
+	...
+	
+	public String getCity(){ return this.city;}
+	public String getCountry(){	return this.country;}
+	public String getCode(){return this.code3;}
+  
+  
+  public static void main(String[] args)
+  {
+    ArrayList<Airport> airports = new ArrayList();
+    ...
+    airports.add(...);
+    ...
+    Collections.sort(airports);
+  }
+  //Must override compareTo() method
+  // smaller.compareTo(bigger)   				Negative
+  // sameSize.compareTo(otherSameSize)  0
+  // bigger.compareTo(smaller)   				Positive
+  public int compareTo(Airport other)
+  {
+		return (this.getCity()).compareTo(other.getCity());	
+		// Here we use city names
+		// We want to be lazy so just use pre-defined compareTo for String inputs
+		// Strings are comparable.
+	
+		//return (this.getCountry()).compareTo(other.getCountry());	
+  }
+}
+```
+
+
+
+![Screen Shot 2019-06-17 at 8.26.31 PM](http://ww4.sinaimg.cn/large/006tNc79ly1g4505661w7j30k406gdhx.jpg)
+
+---
+
+### Concept Challenge: Which Sort?
+
+![Screen Shot 2019-06-17 at 8.33.31 PM](http://ww4.sinaimg.cn/large/006tNc79ly1g450cdtac3j30ga0cpdj7.jpg)
+
+- It must **not be selection sort**
+
+  - You should find 1 as the first element at the first iteration.
+
+  ![Screen Shot 2019-06-17 at 8.39.13 PM](http://ww4.sinaimg.cn/large/006tNc79ly1g450ies7ejj30fs0aemyz.jpg)
+
+- **It’s insertion sort.** The first 4 elements are in order, which is what is guaranteed after the first 3 iterations of the outer loop in insertion sort.
+
+  ![Screen Shot 2019-06-17 at 8.37.54 PM](http://ww3.sinaimg.cn/large/006tNc79ly1g450gy8ofwj30fw0alaby.jpg)
 
 ---
 
