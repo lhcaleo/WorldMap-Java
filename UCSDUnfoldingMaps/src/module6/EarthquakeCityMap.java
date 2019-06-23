@@ -13,8 +13,11 @@ import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
+import de.fhpotsdam.unfolding.providers.AbstractMapProvider;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
+import de.fhpotsdam.unfolding.providers.Microsoft;
+import de.fhpotsdam.unfolding.providers.OpenStreetMap;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import parsing.ParseFeed;
 import processing.core.PApplet;
@@ -54,6 +57,11 @@ public class EarthquakeCityMap extends PApplet {
 	// The map
 	private UnfoldingMap map;
 	
+	// Map providers 
+	AbstractMapProvider provider1;
+	AbstractMapProvider provider2;
+	AbstractMapProvider provider3;
+	
 	// Markers for each city
 	private List<Marker> cityMarkers;
 	// Markers for each earthquake
@@ -74,7 +82,10 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			provider1 = new Google.GoogleMapProvider();
+			provider2 = new Microsoft.AerialProvider();
+			provider3  = new OpenStreetMap.OpenStreetMapProvider();
+			map = new UnfoldingMap(this, 200, 50, 650, 600, provider1);
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 		    //earthquakesURL = "2.5_week.atom";
 		}
@@ -137,6 +148,22 @@ public class EarthquakeCityMap extends PApplet {
 		addKey();
 		
 	}
+	/*
+	 * enables switching between different tile providers for the same map. 
+	 * All map settings are persistent, 
+	 * i.e. current transformations, markers, interactions, etc will stay the same.
+	 * Override @see processing.core.PApplet#keyPressed()
+	 */
+	
+	public void keyPressed() {
+	    if (key == '1') {
+	        map.mapDisplay.setProvider(provider1);
+	    } else if (key == '2') {
+	        map.mapDisplay.setProvider(provider2);
+	    } else if (key == '3') {
+	        map.mapDisplay.setProvider(provider3);
+	    }
+	}
 	
 	
 	// TODO: Add the method:
@@ -144,7 +171,7 @@ public class EarthquakeCityMap extends PApplet {
 	// and then call that method from setUp
 	private void sortAndPrint(int numToPrint) 
 	{
-		EarthquakeMarker[] quakeMarkersArray = (EarthquakeMarker[]) quakeMarkers.toArray();
+		EarthquakeMarker[] quakeMarkersArray = quakeMarkers.toArray(new EarthquakeMarker[quakeMarkers.size()]);
 		Arrays.sort(quakeMarkersArray);
 		for(int i = 0; i < numToPrint && i < quakeMarkersArray.length; i++) 
 		{
@@ -282,7 +309,7 @@ public class EarthquakeCityMap extends PApplet {
 		int xbase = 25;
 		int ybase = 50;
 		
-		rect(xbase, ybase, 150, 250);
+		rect(xbase, ybase, 150, 350);
 		
 		fill(0);
 		textAlign(LEFT, CENTER);
@@ -302,7 +329,7 @@ public class EarthquakeCityMap extends PApplet {
 		
 		text("Land Quake", xbase+50, ybase+70);
 		text("Ocean Quake", xbase+50, ybase+90);
-		text("Size ~ Magnitude", xbase+25, ybase+110);
+		text("Size ~ Magnitude", xbase+25, ybase+120);
 		
 		fill(255, 255, 255);
 		ellipse(xbase+35, 
@@ -335,7 +362,16 @@ public class EarthquakeCityMap extends PApplet {
 		line(centerx-8, centery-8, centerx+8, centery+8);
 		line(centerx-8, centery+8, centerx+8, centery-8);
 		
-		
+		//Add info for keys press
+		textAlign(LEFT, CENTER);
+		fill(0, 0, 0);
+		text("Switch Maps by Keys", xbase+25, ybase+230);
+		textSize(11);
+		text("Default: GoogleMap", xbase+25, ybase+250);
+		textSize(12);
+		text("'1' GoogleMap", xbase+25, ybase+270);
+		text("'2' MicrosoftMap", xbase+25, ybase+290);
+		text("'3' OpenStreetMap", xbase+25, ybase+310);
 	}
 
 	

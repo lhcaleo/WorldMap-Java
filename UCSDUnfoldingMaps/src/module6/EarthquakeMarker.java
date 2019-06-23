@@ -13,7 +13,6 @@ import processing.core.PGraphics;
 public abstract class EarthquakeMarker extends CommonMarker 
 	implements Comparable<EarthquakeMarker>
 {
-	
 	// Did the earthquake occur on land?  This will be set by the subclasses.
 	protected boolean isOnLand;
 
