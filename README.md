@@ -1,4 +1,4 @@
-# Interactive Earthquake Map of the World 
+# Interactive Earthquake Map of the World
 ## Description:
 - Built an Applet of a 2D earthquake map of the world using Processing (Java) graphics methods and Unfolding Maps library functions to visualize earthquake data
 
@@ -13,7 +13,7 @@
 ---
 ## Image Presentation
 ### - Map Interface
-![Image](./Images_Presentation/WholeMap.png)
+![Image](./Images_Presentation/WholeMAP.png)
 ### - Earthquake Marker
 ![Image](./Images_Presentation/EarthquakeMarker.png)
 ### - City Marker
