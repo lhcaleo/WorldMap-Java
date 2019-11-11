@@ -1733,6 +1733,7 @@ public class MyPApplet extends PApplet
 
 - Ex: Find Beijing: Linear Search
 - `toFind[Beijing]`
+  
   - start at beginning, keep going.   `index[0]`
 
 ---
@@ -1801,7 +1802,7 @@ Much better than linear search!
 
 ```c
 Initialize low = 0, high = size of list - 1
-while ???:
+while low <= high:
 	mid = (high+low)/2;
 	if the city to find equals the city at mid
 		return the airport code

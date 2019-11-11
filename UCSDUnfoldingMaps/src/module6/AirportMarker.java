@@ -27,7 +27,6 @@ public class AirportMarker extends CommonMarker {
 		pg.fill(11);
 		pg.ellipse(x, y, 5, 5);
 		
-		
 	}
 
 	@Override
